@@ -7,6 +7,11 @@ on:
     branches: [master, main]
     types: [opened, synchronize, closed]
 
+permissions:
+  contents: write
+  packages: write
+  pull-requests: read
+
 jobs:
   check-approvals:
     if: github.event_name == 'pull_request'
