@@ -188,10 +188,10 @@ export class OUManager {
   generateEmailAddress(student: Student, domain: string, emailConfig?: EmailConfig): string {
     const firstName = student.firstName.toLowerCase().replace(/[^a-z]/g, '');
     const lastName = student.lastName.toLowerCase().replace(/[^a-z]/g, '');
-    
+
     const format = emailConfig?.graduationYearFormat || 'four-digit';
     const separator = emailConfig?.separator || '';
-    
+
     let year: string;
     if (format === 'two-digit') {
       year = student.graduationYear.toString().slice(-2);

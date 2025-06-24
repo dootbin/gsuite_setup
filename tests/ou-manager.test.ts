@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from '@std/testing';
 import { OUManager } from '../src/ou-manager.ts';
-import { Student, EmailConfig } from '../src/types.ts';
+import { EmailConfig, Student } from '../src/types.ts';
 
 Deno.test('OUManager - getSchoolLevel', () => {
   const ouManager = new OUManager();
@@ -83,21 +83,21 @@ Deno.test('OUManager - generateEmailAddress with two-digit year format', () => {
   // Two-digit format with dot separator
   const emailConfig1: EmailConfig = {
     graduationYearFormat: 'two-digit',
-    separator: '.'
+    separator: '.',
   };
   const email1 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig1);
   assertEquals(email1, 'john.doe.28@school.edu');
 
   // Two-digit format without separator
   const emailConfig2: EmailConfig = {
-    graduationYearFormat: 'two-digit'
+    graduationYearFormat: 'two-digit',
   };
   const email2 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig2);
   assertEquals(email2, 'john.doe28@school.edu');
 
   // Four-digit format (backward compatibility)
   const emailConfig3: EmailConfig = {
-    graduationYearFormat: 'four-digit'
+    graduationYearFormat: 'four-digit',
   };
   const email3 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig3);
   assertEquals(email3, 'john.doe2028@school.edu');

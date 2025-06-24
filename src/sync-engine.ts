@@ -407,7 +407,11 @@ export class SyncEngine {
     const { student, targetOUPath } = action;
 
     if (!student.email) {
-      student.email = this.ouManager.generateEmailAddress(student, this.config.googleDomain, this.config.emailConfig);
+      student.email = this.ouManager.generateEmailAddress(
+        student,
+        this.config.googleDomain,
+        this.config.emailConfig,
+      );
     }
 
     const newUser: GoogleUser = {
