@@ -81,14 +81,24 @@ jobs:
             --output gsuite-sync-linux \
             src/main.ts
 
-      - name: Compile binary for macOS
+      - name: Compile binary for macOS (x86_64)
         run: |
           deno compile \
             --allow-net \
             --allow-read \
             --allow-env \
             --target x86_64-apple-darwin \
-            --output gsuite-sync-macos \
+            --output gsuite-sync-macos-x86_64 \
+            src/main.ts
+
+      - name: Compile binary for macOS (ARM64)
+        run: |
+          deno compile \
+            --allow-net \
+            --allow-read \
+            --allow-env \
+            --target aarch64-apple-darwin \
+            --output gsuite-sync-macos-arm64 \
             src/main.ts
 
       - name: Compile binary for Windows
@@ -106,8 +116,11 @@ jobs:
           echo "Testing Linux binary..."
           ./gsuite-sync-linux --help
 
-          echo "Testing macOS binary..."
-          file gsuite-sync-macos
+          echo "Testing macOS x86_64 binary..."
+          file gsuite-sync-macos-x86_64
+
+          echo "Testing macOS ARM64 binary..."
+          file gsuite-sync-macos-arm64
 
           echo "Testing Windows binary..."
           file gsuite-sync-windows.exe
@@ -118,7 +131,8 @@ jobs:
           name: compiled-binaries
           path: |
             gsuite-sync-linux
-            gsuite-sync-macos
+            gsuite-sync-macos-x86_64
+            gsuite-sync-macos-arm64
             gsuite-sync-windows.exe
 
   create-release:
@@ -167,7 +181,8 @@ jobs:
           echo "" >> release-notes.md
           echo "## Binaries" >> release-notes.md
           echo "- \`gsuite-sync-linux\`: Linux x86_64 binary" >> release-notes.md
-          echo "- \`gsuite-sync-macos\`: macOS x86_64 binary" >> release-notes.md
+          echo "- \`gsuite-sync-macos-x86_64\`: macOS x86_64 (Intel) binary" >> release-notes.md
+          echo "- \`gsuite-sync-macos-arm64\`: macOS ARM64 (Apple Silicon) binary" >> release-notes.md
           echo "- \`gsuite-sync-windows.exe\`: Windows x86_64 binary" >> release-notes.md
 
           cat release-notes.md
@@ -180,7 +195,8 @@ jobs:
           body_path: release-notes.md
           files: |
             gsuite-sync-linux
-            gsuite-sync-macos
+            gsuite-sync-macos-x86_64
+            gsuite-sync-macos-arm64
             gsuite-sync-windows.exe
           draft: false
           prerelease: false
