@@ -1,0 +1,30 @@
+{
+  "passwordConfig": {
+    "type": "prefix_studentid",
+    "prefix": "new",
+    "comment": "Available types: 'prefix_studentid', 'random', 'custom_function'"
+  },
+  "ouRoot": "/test",
+  "comment": "Configure the root OU for all student accounts. Default: '/org/student'",
+  "examples": {
+    "prefix_studentid": {
+      "type": "prefix_studentid",
+      "prefix": "school",
+      "description": "Creates passwords like 'school1234' from student ID"
+    },
+    "random": {
+      "type": "random",
+      "length": 12,
+      "includeUppercase": true,
+      "includeLowercase": true,
+      "includeNumbers": true,
+      "includeSymbols": false,
+      "description": "Generates random passwords with specified criteria"
+    },
+    "custom_function": {
+      "type": "custom_function",
+      "customPattern": "{firstName}{graduationYear}",
+      "description": "Custom pattern using student data placeholders: {firstName}, {lastName}, {studentId}, {graduationYear}"
+    }
+  }
+}

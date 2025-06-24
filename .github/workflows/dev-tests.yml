@@ -1,0 +1,126 @@
+name: Dev Branch Tests
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.json', 'deno.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      - name: Check formatting
+        run: deno fmt --check
+
+      - name: Run linting
+        run: deno lint
+
+      - name: Type check
+        run: deno check src/**/*.ts
+
+      - name: Run tests
+        run: deno test --allow-net --allow-read --allow-env --coverage=coverage
+
+      - name: Generate coverage report
+        run: deno coverage coverage --lcov --output=coverage.lcov
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.lcov
+          fail_ci_if_error: true
+
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run security audit
+        run: |
+          # Check for common security issues in TypeScript/JavaScript
+          if command -v npm &> /dev/null; then
+            npm audit --audit-level=moderate || true
+          fi
+
+  validate-sample:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Generate and validate sample CSV
+        run: |
+          deno run --allow-read --allow-write src/main.ts --generate-sample
+          if [ ! -f "sample-students.csv" ]; then
+            echo "Failed to generate sample CSV"
+            exit 1
+          fi
+
+          # Validate CSV has correct number of columns
+          COLUMNS=$(head -1 sample-students.csv | tr ',' '\n' | wc -l)
+          if [ "$COLUMNS" -ne 12 ]; then
+            echo "Sample CSV has $COLUMNS columns, expected 12"
+            exit 1
+          fi
+
+          echo "Sample CSV validation passed"
+
+  dry-run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Create test environment
+        run: |
+          # Create minimal test files
+          cp .env.example .env
+
+          # Set dummy values for required env vars
+          echo "GOOGLE_SERVICE_ACCOUNT_KEY_FILE=test-key.json" >> .env
+          echo "GOOGLE_DOMAIN=test.edu" >> .env
+          echo "GOOGLE_DELEGATED_USER=admin@test.edu" >> .env
+          echo "DRY_RUN=true" >> .env
+
+          # Create dummy service account key
+          echo '{"type":"service_account","client_email":"test@test.iam.gserviceaccount.com","private_key":"-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----","token_uri":"https://oauth2.googleapis.com/token"}' > test-key.json
+
+      - name: Test dry run with sample data
+        run: |
+          # Generate sample CSV first
+          deno run --allow-read --allow-write src/main.ts --generate-sample
+
+          # Test dry run (should fail gracefully since we have dummy credentials)
+          deno run --allow-net --allow-read --allow-env src/main.ts --dry-run --csv-file sample-students.csv || true

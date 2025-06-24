@@ -1,0 +1,23 @@
+# CODEOWNERS file
+# This file defines who owns what parts of the repository
+# Global owners - these users will be requested for review on all PRs
+* @owner1 @owner2
+
+# Source code requires review from core team
+src/ @core-team-member1 @core-team-member2
+
+# CI/CD pipeline changes require DevOps review  
+.github/ @devops-lead @core-team-member1
+
+# Documentation changes can be reviewed by anyone on the team
+*.md @docs-team
+
+# Configuration files require careful review
+*.json @core-team-member1 @core-team-member2
+*.env* @security-team @core-team-member1
+
+# Replace the placeholder usernames above with actual GitHub usernames
+# Examples:
+# * @bmiles @john-doe
+# src/ @senior-dev @tech-lead
+# .github/ @devops-engineer @bmiles

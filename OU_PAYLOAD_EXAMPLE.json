@@ -1,0 +1,221 @@
+{
+  "organizationalUnit": {
+    "description": "Complete example of an Organizational Unit with all available properties",
+    "example": {
+      "kind": "admin#directory#orgUnit",
+      "name": "student_aliases",
+      "description": "Hidden organizational unit for student alias accounts during migration. Users in this OU are not visible in the global address book.",
+      "etag": "\"some-etag-value\"",
+      "blockInheritance": false,
+      "orgUnitId": "id:abc123def456",
+      "orgUnitPath": "/org/student/hidden_aliases",
+      "parentOrgUnitId": "id:parent123",
+      "parentOrgUnitPath": "/org/student"
+    },
+    "notes": {
+      "name": "Required. The organizational unit's path name (not the full path)",
+      "description": "Optional. Human-readable description of the OU",
+      "parentOrgUnitPath": "Required unless parentOrgUnitId is provided",
+      "parentOrgUnitId": "Required unless parentOrgUnitPath is provided",
+      "blockInheritance": "DEPRECATED - setting this has no effect",
+      "orgUnitPath": "Read-only. Full path derived from parentOrgUnitPath + name",
+      "orgUnitId": "Read-only. Unique identifier assigned by Google"
+    }
+  },
+
+  "user": {
+    "description": "Complete example of a User account with all available properties, focusing on directory visibility control",
+    "example": {
+      "kind": "admin#directory#user",
+      "id": "unique-user-id-12345",
+      "etag": "\"user-etag-value\"",
+      "primaryEmail": "john.smith.old@school.edu",
+      "name": {
+        "givenName": "John",
+        "familyName": "Smith",
+        "fullName": "John Smith"
+      },
+      "isAdmin": false,
+      "isDelegatedAdmin": false,
+      "lastLoginTime": "2025-01-15T10:30:00.000Z",
+      "creationTime": "2024-08-15T09:00:00.000Z",
+      "agreedToTerms": true,
+      "suspended": false,
+      "archived": false,
+      "changePasswordAtNextLogin": false,
+      "ipWhitelisted": false,
+      "emails": [
+        {
+          "address": "john.smith.old@school.edu",
+          "type": "work",
+          "primary": true
+        },
+        {
+          "address": "j.smith@school.edu",
+          "type": "work",
+          "primary": false
+        }
+      ],
+      "aliases": [
+        "john.smith2025@school.edu"
+      ],
+      "nonEditableAliases": [
+        "john.smith.legacy@school.edu"
+      ],
+      "customerId": "C03az79cb",
+      "orgUnitPath": "/org/student/hidden_aliases",
+      "isMailboxSetup": true,
+
+      "includeInGlobalAddressList": false,
+
+      "addresses": [
+        {
+          "type": "home",
+          "streetAddress": "123 Main St",
+          "locality": "Anytown",
+          "region": "ST",
+          "postalCode": "12345",
+          "country": "US",
+          "primary": true
+        }
+      ],
+      "externalIds": [
+        {
+          "value": "STU-2025-001234",
+          "type": "custom",
+          "customType": "student_id"
+        }
+      ],
+      "organizations": [
+        {
+          "name": "Example School District",
+          "title": "Student",
+          "primary": true,
+          "type": "school",
+          "department": "Grade 10",
+          "description": "High School Student"
+        }
+      ],
+      "phones": [
+        {
+          "value": "+1-555-123-4567",
+          "type": "mobile",
+          "primary": true
+        }
+      ],
+      "relations": [
+        {
+          "value": "jane.smith@parent.com",
+          "type": "manager",
+          "customType": "parent_guardian"
+        }
+      ],
+      "ims": [
+        {
+          "type": "work",
+          "protocol": "gtalk",
+          "im": "john.smith@chat.school.edu",
+          "primary": true
+        }
+      ],
+      "websites": [
+        {
+          "value": "https://student.school.edu/john.smith",
+          "type": "profile",
+          "primary": true
+        }
+      ],
+      "locations": [
+        {
+          "type": "desk",
+          "area": "Building A",
+          "buildingId": "building-a-123"
+        }
+      ],
+      "keywords": [
+        {
+          "type": "custom",
+          "customType": "grade_level",
+          "value": "10"
+        }
+      ],
+      "gender": {
+        "type": "male"
+      },
+      "customSchemas": {
+        "student_info": {
+          "graduation_year": "2027",
+          "enrollment_date": "2024-08-15",
+          "parent_email": "jane.smith@parent.com"
+        }
+      },
+      "recoveryEmail": "john.smith.recovery@gmail.com",
+      "recoveryPhone": "+1-555-987-6543"
+    },
+
+    "criticalProperties": {
+      "includeInGlobalAddressList": {
+        "description": "THIS IS THE KEY PROPERTY YOU NEED! Controls whether the user appears in the global address book",
+        "type": "boolean",
+        "values": {
+          "true": "User appears in autocomplete, contacts, and directory searches (DEFAULT)",
+          "false": "User is HIDDEN from address book - exactly what you want for alias accounts!"
+        },
+        "useCase": "Set to false for your old email aliases to hide them from staff address books"
+      },
+      "orgUnitPath": {
+        "description": "Determines which OU the user belongs to",
+        "type": "string",
+        "example": "/org/student/hidden_aliases",
+        "note": "You can also control directory visibility at the OU level via Directory Settings"
+      }
+    },
+
+    "migrationStrategy": {
+      "description": "How to use these properties for your migration",
+      "steps": [
+        "1. Create a special OU like '/org/student/hidden_aliases'",
+        "2. Create alias accounts in this OU with includeInGlobalAddressList: false",
+        "3. Set up email aliases/forwarding from old addresses to new student accounts",
+        "4. Staff won't see the old email addresses in their address books",
+        "5. Eventually decommission the alias accounts when migration is complete"
+      ]
+    }
+  },
+
+  "directoryVisibilityOptions": {
+    "description": "Additional ways to control directory visibility beyond user-level settings",
+    "ouLevelControl": {
+      "description": "You can also control visibility at the OU level in Admin Console",
+      "path": "Admin Console > Directory > Directory Settings > Visibility Settings",
+      "options": [
+        "No users - Users can't find other users",
+        "All users - Can find all users except those individually hidden",
+        "Users in custom directory - Only specific groups visible"
+      ]
+    },
+    "individualUserControl": {
+      "description": "Per-user directory sharing setting",
+      "path": "Admin Console > Directory > Users > [User] > User Information > Directory Sharing",
+      "apiProperty": "includeInGlobalAddressList"
+    }
+  },
+
+  "emailAliasStrategy": {
+    "description": "Recommended approach for your email migration",
+    "workflow": {
+      "step1": "Create hidden OU for alias accounts",
+      "step2": "Create user accounts with old email addresses in hidden OU",
+      "step3": "Set includeInGlobalAddressList: false on all alias accounts",
+      "step4": "Set up email routing/forwarding to new student accounts",
+      "step5": "New accounts use new email format, old emails forward but stay hidden",
+      "step6": "Eventually delete alias accounts after migration period"
+    },
+    "benefits": [
+      "Staff don't see old email addresses cluttering their address books",
+      "Old emails still work during transition period",
+      "Clean separation between old and new account structures",
+      "Easy to track and manage via separate OU"
+    ]
+  }
+}

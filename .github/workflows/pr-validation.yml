@@ -1,0 +1,143 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [dev, master, main]
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Validate PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          # Check if PR title follows conventional commit format
+          if [[ "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+ ]]; then
+            echo "✅ PR title follows conventional commit format: $PR_TITLE"
+          else
+            echo "❌ PR title should follow conventional commit format"
+            echo "Examples: 'feat: add new feature', 'fix: resolve bug', 'docs: update readme'"
+            exit 1
+          fi
+
+      - name: Check for breaking changes
+        run: |
+          # Check if this is a breaking change
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+
+          if [[ "$PR_TITLE" == *"!"* ]] || [[ "$PR_BODY" == *"BREAKING CHANGE"* ]]; then
+            echo "⚠️  Breaking change detected in PR"
+            echo "Make sure to update version accordingly"
+          fi
+
+      - name: Run quick validation
+        run: |
+          echo "Running formatting check..."
+          deno fmt --check
+
+          echo "Running linting..."
+          deno lint
+
+          echo "Running type check..."
+          deno check src/**/*.ts
+
+      - name: Check file changes
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check if any source files were changed
+          if echo "$CHANGED_FILES" | grep -E '\.(ts|js)$'; then
+            echo "✅ Source code changes detected"
+            echo "NEEDS_FULL_TEST=true" >> $GITHUB_ENV
+          else
+            echo "ℹ️ No source code changes detected"
+            echo "NEEDS_FULL_TEST=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run tests if needed
+        if: env.NEEDS_FULL_TEST == 'true'
+        run: |
+          echo "Running full test suite due to source code changes..."
+          deno test --allow-net --allow-read --allow-env
+
+  check-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for dependency changes
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "deno.json"; then
+            echo "⚠️  Dependencies changed in deno.json"
+            echo "Please ensure all dependencies are necessary and up to date"
+
+            # Show the diff
+            git diff origin/${{ github.base_ref }}...HEAD -- deno.json
+          else
+            echo "✅ No dependency changes detected"
+          fi
+
+  security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for secrets in code
+        run: |
+          # Simple check for potential secrets (this is basic - consider using a proper secret scanner)
+          if grep -r -i -E "(password|secret|key|token|api_key)" src/ --include="*.ts" --exclude-dir=tests; then
+            echo "⚠️  Potential secrets found in source code"
+            echo "Please ensure no actual secrets are committed"
+            echo "Use environment variables or configuration files that are gitignored"
+          else
+            echo "✅ No obvious secrets found in source code"
+          fi
+
+      - name: Check gitignore coverage
+        run: |
+          # Check if important files are properly gitignored
+          NEEDED_IGNORES=(".env" "*.json" "!deno.json" "!package.json" "logs/" "*.log")
+
+          for pattern in "${NEEDED_IGNORES[@]}"; do
+            if grep -q "$pattern" .gitignore; then
+              echo "✅ $pattern is gitignored"
+            else
+              echo "⚠️  Consider adding $pattern to .gitignore"
+            fi
+          done
+
+  size-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check repository size
+        run: |
+          REPO_SIZE=$(du -sh . | cut -f1)
+          echo "Repository size: $REPO_SIZE"
+
+          # Check for large files
+          find . -type f -size +1M -not -path "./.git/*" | while read -r file; do
+            SIZE=$(du -h "$file" | cut -f1)
+            echo "⚠️  Large file detected: $file ($SIZE)"
+          done || echo "✅ No large files detected"

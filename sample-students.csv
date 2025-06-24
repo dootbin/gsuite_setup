@@ -1,0 +1,5 @@
+Cur School Name,Stu Legal First,Stu Legal Last,Cur School Name,Cur School Code,Entity ID,Student ID,Schl Email Addr,Graduated,Student Grade,Prop Grad Date,Stu Grad Yr
+Example Elementary,John,Doe,Example Elementary,EE01,ENT001,STU001,john.doe2028@school.edu,false,9,2028-06-15,2028
+Example Middle,Jane,Smith,Example Middle,EM01,ENT002,STU002,jane.smith2031@school.edu,false,6,2031-06-15,2031
+Example High,Bob,Johnson,Example High,EH01,ENT003,STU003,bob.johnson2025@school.edu,false,12,2025-06-15,2025
+Example Elementary,Alice,Williams,Example Elementary,EE01,ENT004,STU004,,false,4K,2038-06-15,2038

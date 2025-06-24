@@ -1,0 +1,57 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Google service account keys
+*.json
+!OU_PAYLOAD_EXAMPLE.json
+!deno.json
+!package.json
+!config/*.example.json
+service-account-*.json
+
+# Config files (keep examples)
+config/config.json
+config.json
+
+# Logs
+logs/
+*.log
+
+# Backups
+backups/
+*.backup
+*.bak
+
+# CSV files with real data
+students.csv
+*.csv
+!sample-students.csv
+!test-students.csv
+
+# Deno cache
+.deno/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Test coverage
+coverage/
+.coverage/
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+real_data.csv
