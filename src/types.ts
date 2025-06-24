@@ -184,6 +184,11 @@ export interface SyncSummary {
   duration?: number;
 }
 
+export interface EmailConfig {
+  graduationYearFormat: 'two-digit' | 'four-digit';
+  separator?: string;
+}
+
 export interface PasswordConfig {
   type: 'prefix_studentid' | 'random' | 'custom_function';
   prefix?: string;
@@ -212,6 +217,7 @@ export interface Config {
   moveOnly?: boolean;
   deactivateOnly?: boolean;
   passwordConfig?: PasswordConfig;
+  emailConfig?: EmailConfig;
   ouRoot?: string;
   // Keep for backward compatibility
   passwordPrefix?: string;

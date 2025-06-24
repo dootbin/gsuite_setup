@@ -1,4 +1,4 @@
-import { GradeMapping, SchoolLevel, Student } from './types.ts';
+import { EmailConfig, GradeMapping, SchoolLevel, Student } from './types.ts';
 
 export class OUManager {
   private readonly baseStudentOU: string;
@@ -185,12 +185,21 @@ export class OUManager {
     return graduationYear;
   }
 
-  generateEmailAddress(student: Student, domain: string): string {
+  generateEmailAddress(student: Student, domain: string, emailConfig?: EmailConfig): string {
     const firstName = student.firstName.toLowerCase().replace(/[^a-z]/g, '');
     const lastName = student.lastName.toLowerCase().replace(/[^a-z]/g, '');
-    const year = student.graduationYear;
+    
+    const format = emailConfig?.graduationYearFormat || 'four-digit';
+    const separator = emailConfig?.separator || '';
+    
+    let year: string;
+    if (format === 'two-digit') {
+      year = student.graduationYear.toString().slice(-2);
+    } else {
+      year = student.graduationYear.toString();
+    }
 
-    return `${firstName}.${lastName}${year}@${domain}`;
+    return `${firstName}.${lastName}${separator}${year}@${domain}`;
   }
 
   getHiddenAliasOUPath(): string {

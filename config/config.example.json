@@ -4,6 +4,11 @@
     "prefix": "new",
     "comment": "Available types: 'prefix_studentid', 'random', 'custom_function'"
   },
+  "emailConfig": {
+    "graduationYearFormat": "two-digit",
+    "separator": ".",
+    "comment": "Email format options: 'two-digit' (john.doe.25@domain.edu) or 'four-digit' (john.doe2025@domain.edu)"
+  },
   "ouRoot": "/test",
   "comment": "Configure the root OU for all student accounts. Default: '/org/student'",
   "examples": {
@@ -25,6 +30,21 @@
       "type": "custom_function",
       "customPattern": "{firstName}{graduationYear}",
       "description": "Custom pattern using student data placeholders: {firstName}, {lastName}, {studentId}, {graduationYear}"
+    },
+    "emailConfig_examples": {
+      "two_digit_with_dot": {
+        "graduationYearFormat": "two-digit",
+        "separator": ".",
+        "description": "Creates emails like john.doe.25@school.edu"
+      },
+      "two_digit_without_separator": {
+        "graduationYearFormat": "two-digit",
+        "description": "Creates emails like john.doe25@school.edu"
+      },
+      "four_digit_default": {
+        "graduationYearFormat": "four-digit",
+        "description": "Creates emails like john.doe2025@school.edu (backward compatible)"
+      }
     }
   }
 }

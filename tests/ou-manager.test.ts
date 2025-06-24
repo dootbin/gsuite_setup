@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from '@std/testing';
 import { OUManager } from '../src/ou-manager.ts';
-import { Student } from '../src/types.ts';
+import { Student, EmailConfig } from '../src/types.ts';
 
 Deno.test('OUManager - getSchoolLevel', () => {
   const ouManager = new OUManager();
@@ -67,6 +67,44 @@ Deno.test('OUManager - generateEmailAddress', () => {
 
   const email2 = ouManager.generateEmailAddress(studentWithSpecialChars, 'school.edu');
   assertEquals(email2, 'maryjane.obrien2031@school.edu');
+});
+
+Deno.test('OUManager - generateEmailAddress with two-digit year format', () => {
+  const ouManager = new OUManager();
+
+  const student: Student = {
+    studentId: 'STU001',
+    firstName: 'John',
+    lastName: 'Doe',
+    grade: '9',
+    graduationYear: 2028,
+  };
+
+  // Two-digit format with dot separator
+  const emailConfig1: EmailConfig = {
+    graduationYearFormat: 'two-digit',
+    separator: '.'
+  };
+  const email1 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig1);
+  assertEquals(email1, 'john.doe.28@school.edu');
+
+  // Two-digit format without separator
+  const emailConfig2: EmailConfig = {
+    graduationYearFormat: 'two-digit'
+  };
+  const email2 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig2);
+  assertEquals(email2, 'john.doe28@school.edu');
+
+  // Four-digit format (backward compatibility)
+  const emailConfig3: EmailConfig = {
+    graduationYearFormat: 'four-digit'
+  };
+  const email3 = ouManager.generateEmailAddress(student, 'school.edu', emailConfig3);
+  assertEquals(email3, 'john.doe2028@school.edu');
+
+  // Default behavior (no config provided)
+  const email4 = ouManager.generateEmailAddress(student, 'school.edu');
+  assertEquals(email4, 'john.doe2028@school.edu');
 });
 
 Deno.test('OUManager - shouldMoveStudent', () => {
