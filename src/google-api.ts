@@ -321,10 +321,14 @@ export class GoogleAPIClient {
     const url = query ? `${endpoint}?query=${encodeURIComponent(query)}` : endpoint;
 
     try {
-      const response = await this.makeAPIRequest<{chromeosdevices?: ChromeDevice[]}>('GET', url);
+      const response = await this.makeAPIRequest<{ chromeosdevices?: ChromeDevice[] }>('GET', url);
       return response.chromeosdevices || [];
     } catch (error) {
-      logger.error(`Failed to list Chrome devices: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error(
+        `Failed to list Chrome devices: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
       throw error;
     }
   }
@@ -332,16 +336,20 @@ export class GoogleAPIClient {
   async getChromeDeviceBySerial(serialNumber: string): Promise<ChromeDevice | null> {
     try {
       const devices = await this.listChromeDevices(`id:${serialNumber}`);
-      return devices.find(device => device.serialNumber === serialNumber) || null;
+      return devices.find((device) => device.serialNumber === serialNumber) || null;
     } catch (error) {
-      logger.error(`Failed to get Chrome device by serial ${serialNumber}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error(
+        `Failed to get Chrome device by serial ${serialNumber}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
       throw error;
     }
   }
 
   async moveChromeDeviceToOU(deviceId: string, orgUnitPath: string): Promise<void> {
     const endpoint = `/customer/my_customer/chromeosdevices/${deviceId}/action`;
-    
+
     const body = {
       action: 'move',
       orgUnitPath: orgUnitPath,
@@ -351,7 +359,11 @@ export class GoogleAPIClient {
       await this.makeAPIRequest<void>('POST', endpoint, body);
       logger.info(`Successfully moved Chrome device ${deviceId} to OU ${orgUnitPath}`);
     } catch (error) {
-      logger.error(`Failed to move Chrome device ${deviceId} to OU ${orgUnitPath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error(
+        `Failed to move Chrome device ${deviceId} to OU ${orgUnitPath}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
       throw error;
     }
   }
@@ -363,7 +375,11 @@ export class GoogleAPIClient {
       await this.makeAPIRequest<void>('PUT', endpoint, updates);
       logger.info(`Successfully updated Chrome device ${deviceId}`);
     } catch (error) {
-      logger.error(`Failed to update Chrome device ${deviceId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error(
+        `Failed to update Chrome device ${deviceId}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
       throw error;
     }
   }
@@ -374,7 +390,7 @@ export class GoogleAPIClient {
 
     for (let i = 0; i < serialNumbers.length; i += batchSize) {
       const batch = serialNumbers.slice(i, i + batchSize);
-      const promises = batch.map(serial =>
+      const promises = batch.map((serial) =>
         this.getChromeDeviceBySerial(serial).catch((error) => {
           logger.error(`Failed to get Chrome device ${serial}: ${error.message}`);
           return null;

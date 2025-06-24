@@ -144,6 +144,7 @@ Follow these detailed steps to set up the required Google Workspace Admin config
 #### Security Considerations
 
 ⚠️ **Important Security Notes**:
+
 - Service account has powerful domain-wide access to user data
 - Store the JSON key file securely and never commit it to version control
 - Regularly audit service account usage in Google Cloud Console
@@ -203,7 +204,7 @@ LOG_LEVEL=info
 Password generation is configured via a JSON configuration file. The tool will look for config files in this order:
 
 1. `config/config.json`
-2. `config.json` 
+2. `config.json`
 3. `./config.json`
 
 #### Setting Up Password Configuration
@@ -218,6 +219,7 @@ Password generation is configured via a JSON configuration file. The tool will l
 #### Password Generation Types
 
 **1. Prefix + Student ID (Default)**
+
 ```json
 {
   "passwordConfig": {
@@ -226,10 +228,12 @@ Password generation is configured via a JSON configuration file. The tool will l
   }
 }
 ```
+
 - Creates passwords like `school1234` from student ID
 - Uses last 4 digits of student ID, padded with zeros
 
 **2. Random Passwords**
+
 ```json
 {
   "passwordConfig": {
@@ -242,10 +246,12 @@ Password generation is configured via a JSON configuration file. The tool will l
   }
 }
 ```
+
 - Generates random passwords with specified criteria
 - Configurable length and character sets
 
 **3. Custom Patterns**
+
 ```json
 {
   "passwordConfig": {
@@ -254,6 +260,7 @@ Password generation is configured via a JSON configuration file. The tool will l
   }
 }
 ```
+
 - Available placeholders: `{firstName}`, `{lastName}`, `{studentId}`, `{graduationYear}`, `{firstInitial}`, `{lastInitial}`
 - Example: "john2028" for John Doe graduating in 2028
 
@@ -279,6 +286,7 @@ By default, the tool creates all student accounts under `/org/student`. You can 
 ```
 
 **Default structure:**
+
 ```
 /org/student/
 ├── elementary/2038/john.doe
@@ -287,6 +295,7 @@ By default, the tool creates all student accounts under `/org/student`. You can 
 ```
 
 **Custom root example (`"ouRoot": "/test"`):**
+
 ```
 /test/
 ├── elementary/2038/john.doe
@@ -305,21 +314,21 @@ By default, the tool creates all student accounts under `/org/student`. You can 
 
 The CSV file should contain the following columns in this exact order:
 
-| Column | Description | Required | Example |
-|--------|-------------|----------|---------|
-| **Cur School Name** | Current school building name | Yes | "ELEMENTARY BUILDING" |
-| **Stu Legal First** | Student's legal first name | Yes | "JOHN" |
-| **Stu Legal Last** | Student's legal last name | Yes | "DOE" |
-| **Cur School Name** | Duplicate school name column | Yes | "ELEMENTARY BUILDING" |
-| **Cur School Code** | School building code | Yes | "ELE" |
-| **Entity ID** | Entity identifier | Yes | "400" |
-| **Student ID** | Unique student identifier | Yes | "5976" |
-| **Schl Email Addr** | Student email address | No | "john.doe@student.school.edu" |
-| **Graduated** | Graduation status | No | "No" |
-| **Student Grade** | Current grade level | No | "05", "KG", "K4", "PK" |
-| **Prop Grad Date** | Proposed graduation date | No | "20320605" |
-| **Stu Grad Yr** | Graduation year | Yes | "2032" |
-| **Device Serial** | Chrome device serial number | No | "CHR001234567" |
+| Column              | Description                  | Required | Example                       |
+| ------------------- | ---------------------------- | -------- | ----------------------------- |
+| **Cur School Name** | Current school building name | Yes      | "ELEMENTARY BUILDING"         |
+| **Stu Legal First** | Student's legal first name   | Yes      | "JOHN"                        |
+| **Stu Legal Last**  | Student's legal last name    | Yes      | "DOE"                         |
+| **Cur School Name** | Duplicate school name column | Yes      | "ELEMENTARY BUILDING"         |
+| **Cur School Code** | School building code         | Yes      | "ELE"                         |
+| **Entity ID**       | Entity identifier            | Yes      | "400"                         |
+| **Student ID**      | Unique student identifier    | Yes      | "5976"                        |
+| **Schl Email Addr** | Student email address        | No       | "john.doe@student.school.edu" |
+| **Graduated**       | Graduation status            | No       | "No"                          |
+| **Student Grade**   | Current grade level          | No       | "05", "KG", "K4", "PK"        |
+| **Prop Grad Date**  | Proposed graduation date     | No       | "20320605"                    |
+| **Stu Grad Yr**     | Graduation year              | Yes      | "2032"                        |
+| **Device Serial**   | Chrome device serial number  | No       | "CHR001234567"                |
 
 #### Device Management
 

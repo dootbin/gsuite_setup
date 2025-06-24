@@ -11,14 +11,14 @@ async function loadExternalConfig(): Promise<{ passwordConfig?: PasswordConfig; 
   const configPaths = [
     'config/config.json',
     'config.json',
-    './config.json'
+    './config.json',
   ];
 
   for (const path of configPaths) {
     try {
       const configText = await Deno.readTextFile(path);
       const configData = JSON.parse(configText);
-      
+
       return {
         passwordConfig: configData.passwordConfig as PasswordConfig | undefined,
         ouRoot: configData.ouRoot as string | undefined,

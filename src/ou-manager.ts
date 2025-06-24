@@ -36,18 +36,18 @@ export class OUManager {
     const currentMonth = new Date().getMonth() + 1;
     const isBeforeSchoolYearEnd = currentMonth < 6;
     const currentSchoolYear = isBeforeSchoolYearEnd ? currentYear - 1 : currentYear;
-    
+
     const yearsUntilGraduation = graduationYear - currentSchoolYear;
-    
+
     // Determine school level based on years until graduation
     // 12th grade graduates this year (yearsUntilGraduation = 1)
     // 9th grade graduates in 4 years (yearsUntilGraduation = 4)
     // K graduates in 13 years (yearsUntilGraduation = 13)
-    
+
     if (yearsUntilGraduation <= 4) {
       return 'high'; // 9th-12th grade
     } else if (yearsUntilGraduation <= 7) {
-      return 'middle'; // 6th-8th grade  
+      return 'middle'; // 6th-8th grade
     } else {
       return 'elementary'; // K-5th grade
     }
@@ -57,7 +57,7 @@ export class OUManager {
     // Create a clean OU name from student's first and last name
     const firstName = student.firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const lastName = student.lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    
+
     // Format: firstname.lastname (e.g., "john.smith")
     return `${firstName}.${lastName}`;
   }

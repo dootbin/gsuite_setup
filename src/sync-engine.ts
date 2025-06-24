@@ -1,4 +1,13 @@
-import { ChromeDevice, Config, GoogleUser, PasswordConfig, Student, SyncAction, SyncResult, SyncSummary } from './types.ts';
+import {
+  ChromeDevice,
+  Config,
+  GoogleUser,
+  PasswordConfig,
+  Student,
+  SyncAction,
+  SyncResult,
+  SyncSummary,
+} from './types.ts';
 import { GoogleAPIClient } from './google-api.ts';
 import { OUManager } from './ou-manager.ts';
 import { logger } from './logger.ts';
@@ -109,9 +118,9 @@ export class SyncEngine {
 
   private async fetchExistingDevices(students: Student[]): Promise<Map<string, ChromeDevice>> {
     const serialNumbers = students
-      .filter(student => student.deviceSerial)
-      .map(student => student.deviceSerial!);
-    
+      .filter((student) => student.deviceSerial)
+      .map((student) => student.deviceSerial!);
+
     if (serialNumbers.length === 0) {
       return new Map();
     }
@@ -324,7 +333,7 @@ export class SyncEngine {
       }
 
       const targetOUPath = this.ouManager.getStudentOUPath(student);
-      
+
       // Check if device needs to be moved
       if (device.orgUnitPath !== targetOUPath) {
         actions.push({
@@ -486,9 +495,9 @@ export class SyncEngine {
         return this.generateCustomPatternPassword(student, passwordConfig);
       default:
         // Fallback to original method for backward compatibility
-        return this.generatePrefixStudentIdPassword(student.studentId, { 
+        return this.generatePrefixStudentIdPassword(student.studentId, {
           type: 'prefix_studentid',
-          prefix: this.config.passwordPrefix || 'lh00' 
+          prefix: this.config.passwordPrefix || 'lh00',
         });
     }
   }
@@ -503,10 +512,10 @@ export class SyncEngine {
   private generatePrefixStudentIdPassword(studentId: string, config: PasswordConfig): string {
     // Extract numeric part from student ID (e.g., "STU001" -> "001", "12345" -> "2345")
     const numericPart = studentId.replace(/\D/g, ''); // Remove non-digits
-    
+
     // Take last 4 digits, pad with zeros if needed
     const last4Digits = numericPart.slice(-4).padStart(4, '0');
-    
+
     const prefix = config.prefix || 'lh00';
     return `${prefix}${last4Digits}`;
   }
@@ -514,7 +523,7 @@ export class SyncEngine {
   private generateRandomPassword(config: PasswordConfig): string {
     const length = config.length || 12;
     const chars = this.buildCharacterSet(config);
-    
+
     if (chars.length === 0) {
       throw new Error('No character sets enabled for random password generation');
     }
@@ -523,7 +532,7 @@ export class SyncEngine {
     for (let i = 0; i < length; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    
+
     return password;
   }
 
@@ -543,23 +552,23 @@ export class SyncEngine {
 
   private buildCharacterSet(config: PasswordConfig): string {
     let chars = '';
-    
+
     if (config.includeUppercase !== false) { // Default to true
       chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
-    
+
     if (config.includeLowercase !== false) { // Default to true
       chars += 'abcdefghijklmnopqrstuvwxyz';
     }
-    
+
     if (config.includeNumbers !== false) { // Default to true
       chars += '0123456789';
     }
-    
+
     if (config.includeSymbols) { // Default to false
       chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
     }
-    
+
     return chars;
   }
 

@@ -16,7 +16,7 @@ export class Logger {
   async setup(logLevel: string, logFile?: string): Promise<void> {
     // Convert string log level to proper LevelName
     const level = logLevel.toUpperCase() as log.LevelName;
-    
+
     const handlers: Record<string, log.BaseHandler> = {
       console: new ConsoleHandler(level, {
         formatter: (logRecord: log.LogRecord) => {

@@ -118,54 +118,6 @@ export class CSVParser {
     return value.trim();
   }
 
-  private normalizeGrade(grade: string): string {
-    const normalized = grade.toUpperCase().trim();
-
-    // Handle common grade format variations
-    const gradeMap: Record<string, string> = {
-      'K4': '4K',
-      'KG': 'K',
-      'KINDERGARTEN': 'K',
-      '01': '1',
-      '02': '2',
-      '03': '3',
-      '04': '4',
-      '05': '5',
-      '06': '6',
-      '07': '7',
-      '08': '8',
-      '09': '9',
-    };
-
-    // Apply mapping if exists
-    const mappedGrade = gradeMap[normalized] || normalized;
-
-    const validGrades = [
-      '4K',
-      'K',
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '10',
-      '11',
-      '12',
-    ];
-
-    if (!validGrades.includes(mappedGrade)) {
-      throw new Error(
-        `Invalid grade: ${grade}. Valid grades are: ${validGrades.join(', ')}`,
-      );
-    }
-
-    return mappedGrade;
-  }
-
   private parseGraduationYear(year: string): number {
     const graduationYear = parseInt(year, 10);
 

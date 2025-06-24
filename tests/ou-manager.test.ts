@@ -173,7 +173,7 @@ Deno.test('OUManager - configurable OU root', () => {
   // Test getRequiredOUs with custom root
   const requiredOUs = customOuManager.getRequiredOUs([student]);
   const ouPaths = Array.from(requiredOUs).sort();
-  
+
   assertEquals(ouPaths.includes('/test/high'), true);
   assertEquals(ouPaths.includes('/test/high/2028'), true);
   assertEquals(ouPaths.includes('/test/high/2028/john.doe'), true);
